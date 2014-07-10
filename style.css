@@ -1,3 +1,4 @@
+
 @charset "utf-8";
 /* CSS Document */
 
@@ -27,7 +28,7 @@ hr{
 p{
 	color:#444;
 	text-align:left;
-	font-size:10px;
+	font-size:15px;
 	margin-left: 20px;
 	margin-bottom: -10px;
 }
@@ -35,33 +36,37 @@ p{
 a{
 	color:#444;
 }
-
-
-
-#container{
-	margin: 0 auto;
-	width:800px;
-	border:1px solid #333;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	font-family:Verdana, Geneva, sans-serif;
-	text-align:center;
-}
-
 img{
-	border:10px solid #444;
+	border:3px solid #444;
 	-moz-border-radius: 5px;
-	-webkit-border-radius: 10px;
-	margin: 15px;
+	-webkit-border-radius: 5px;
+	margin: 2px;
 }
-
 img:hover{
 	border-color:#555;
 	-moz-box-shadow: 0px 0px 15px #111;
 	-webkit-box-shadow: 0px 0px 15px #111;
 }
-#sidebar{
-  position: fixed;
-  right: 0;
-  top: 20%;
+#controls{
+position:absolute;
+ bottom:0px;
+ left:37%;
+ z-index:1;
+}
+strong{
+	margin-top: -10px;
+}
+button{
+	margin: 0px;
+	margin-top: -0px;
+	margin-bottom: -0px;
+	padding: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+	box-shadow: 0px 0px 15px 0px #999;
+}
+#disclaimer{
+	right:2px;
+	bottom:10px;
+	position:absolute;
 }

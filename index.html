@@ -1,92 +1,145 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Endless Imgur</title>
-<link rel="stylesheet" href="style.css" />
-</head>
-<body onload="var interVal = window.setInterval('scroll();', 1000);">
-<div id="header">Endless Imgur</div>
-<div id="container"></div>
-<span id="sidebar"><button onclick="window.clearInterval(interVal)">STOP</button></span>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Random Imgur generator -  Choose number of images - Best Imgur Roulette</title>
+	<meta name="Description" content="Choose the number of random images you see. Not affiliated with Imgur.">
+	<script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
+	<script type='text/javascript' src='masonry.pkgd.min.js'></script>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+<center>
+<div id=topbar>
+<div id=topbar_right></div>
+</div>
+<script type='text/javascript'>
+	imgurcache = new Array()
+	a=window.innerWidth;
+	b=window.innerHeight;
+	var loadimages = Math.round(( ( a * b ) * -.000002471085214138067 ) + 40.72076119301664);
+	function resized() {
+				a=window.innerWidth;
+				b=window.innerHeight;
+				loadimages = Math.round(( ( a * b ) * -.000002471085214138067 ) + 40.72076119301664);
+		}
+		$( window ).resize(function() {
+				resized();
+		});
+		$(window).blur(function(){
+			$('#stahp').click();
+		});
+		$(window).load(function(){
+		resized();
+		var Imgur = {
+			fetch: function(num) {
+				var self=this;
+				self.total=num;
+				self.done=0;
+				self.done2=0;
+				self.failures=0;
+				self.start=+new Date;
+
+				$('#images').empty();
+				for (var x = 0; x < num; x++) {
+					self.hunt(function(id) {
+						self.done++;
+						self.done2++;
+						self.skip=Math.floor((Math.random()*40)+25);
+						$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer'><img src='http://i.imgur.com/" + id + "s.png' width='10.5%' /></a>");
+						if(self.done2>self.skip) {
+							self.done2=0;
+						}
+						//self.update();
+					});
+				}
+			},
+			update: function() {
+				var interval=new Date-this.start;
+				function speed(v) { return (~~(v/interval*1e5))/100; }
+				$('#info').html((this.done<this.total?"Loading.. "+this.done+"/"+this.total+" ("+this.failures+" failures"+") ":"Done. ")+"["+speed(this.failures+this.done)+" req/s - "+speed(this.done)+" img/s]");
+			},
+			
+			hunt: function(cb) {
+				var self=this,
+					id = self.random(5),
+					img = new Image;
+						//self.update();
+						img.src = "http://i.imgur.com/"+id+"s.png";
+						img.onload = function() {
+							if ((img.width==198 && img.height==160) || (img.width==161 && img.height==81)) {
+								// assume this is an imgur error image, and retry.
+								fail();
+							} else {
+								cb(id);
+							}
+						}
+						img.onerror = fail; // no escape.
+				function fail() {
+					self.failures++;
+					//self.update();
+					self.hunt(cb);
+				}
+			},
+			random: function(len) {
+				var text = new Array();
+				var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+				for (var i=0; i < len; i++) {
+					imgurchar = possible.charAt(Math.floor(Math.random() * possible.length));
+					if (text.indexOf(imgurchar) == -1) {
+						text.push(imgurchar);
+					} else {
+						i--;
+					}
+				}
+				text = text.join('');
+				if (imgurcache.indexOf(text) == -1) {
+					imgurcache.push(text);
+					return text;
+				} else {
+					self.random(5);
+					return false;
+				}
+			}
+		};
+
+		$('#random').bind('click', function(e) {
+			Imgur.fetch(loadimages);
+		});
+		$('#automatic').bind('click', function() {
+			refreshVar = window.setInterval(function(){Imgur.fetch(loadimages)},10000);
+			Imgur.fetch(loadimages);
+	                $('img').live('click', function() {
+	                        $('#stahp').click();
+	               	});
+		});
+                $('#minutes').bind('click', function() {
+                        refreshVar = window.setInterval(function(){Imgur.fetch(loadimages)},180000);
+                        Imgur.fetch(loadimages);
+                        $('img').live('click', function() {
+                                $('#stahp').click();
+                        });
+                });
+		$('#stahp').bind('click', function(e) {
+			window.clearInterval(refreshVar);
+		});
+		$(document).keyup(function(e) {
+			if (e.keyCode == 27) { $('#stahp').click(); }
+			if (e.keyCode == 82) { $('#random').click(); }
+			if (e.keyCode == 69) { resized() }
+		});
+	});
+</script></head>
+	<body>
+	<div id="images" class="js-masonry" data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }'>
+</div>
+<div id="controls">
+	<button id="random">click here to load (more) random images</button><br>
+	<button id="automatic">automatically refresh every 10 seconds</button>
+	<button id="minutes">automatically refresh every 3 minutes</button><br>
+	<button id="stahp">stop refreshing</button><br>
+	alternate: R to reload, ESC or click an image to clear any auto refresh
+</div>
+<span id="disclaimer">
+		<p>By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS</p>
+</span>
 </body>
 </html>
-<script>
-var contentHeight = 800;
-var pageHeight = document.documentElement.clientHeight;
-var scrollPosition;
-var imageQueue = []; //URLs of the images
-var cacheQueue = 0; //counter for the number of images in the cache
-var img_loading = false; //used to wait until the image has loaded before checking it
-var imgObject = new Image(); //temporary DOM image object
-
-		 imgObject.onerror = function() { img_loading = false; cacheImages(); }; //when the image fails to load, run cacheImages() again
-		 
-		 imgObject.onload = function() {
-				if (this.width == 161 && this.height == 81) { //check if the image is the imgur "not found" image
-					imgObject.src = "http://i.imgur.com/" + randomString(5) + ".jpg"; //try a different URL, then break from the function
-					return;
-				}
-				while(cacheQueue<9) { //once there are 9 images cached, do not run this any more
-				imageQueue.push([imgObject.src]); //push the URL into the image queue array
-				cacheQueue++;
-				img_loading = false; 
-				cacheImages(); //now that we have put a good URL in the array, we need another.
-				}
-				putImages(); //if it gets here, there are 9 images in the array and it's ready to display them
-				}
-				
-function randomString(string_length) { //generates a string in the same way imgur does for its naming convention
-			var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghiklmnopqrstuvwxyz";
-			var output = "";
-			var index;
-
-			for (var i = 0; i < string_length; i++) {
-					var index = Math.floor(Math.random() * chars.length);
-					output += chars.substring(index, index + 1);
-			}
-
-			return output;
-		}
-
-function cacheImages() { //tests if the image is already loading, if not give it a URL to load
-				if (img_loading) return;
-				img_loading = true;
-				imgObject.src = "http://i.imgur.com/" + randomString(5) + ".jpg";
-				}
-				
-
-
-function putImages(){ //display the images with proper formatting
-			  var j = 0;
-			  for(i=0; i<9; i++){
-				  if(imageQueue[0] != ""){
-					 document.getElementById("container").innerHTML += '<a href="'+imageQueue[0]+'"><img src="'+imageQueue[0]+'" style="width: 200px; height: 200px;" /></a>';
-					 j++;
-					 imageQueue.shift();
-					 cacheQueue--;
-				  
-					 if(j == 3 || j == 6)
-						  document.getElementById("container").innerHTML += '<br />';
-					  else if(j == 9){
-						  document.getElementById("container").innerHTML += '<p>'+"<a href='#header'>top</a></p><br /><hr />";
-						  j = 0;
-					  }
-				  }
-			  }
-		  }		
-		
-function scroll(){ //called on a regular basis, it checks to see if the page has scrolled far enough to render the next 9 image section
-	if(navigator.appName == "Microsoft Internet Explorer")
-		scrollPosition = document.documentElement.scrollTop;
-	else
-		scrollPosition = window.pageYOffset;		
-	
-	if((contentHeight - pageHeight - scrollPosition) < 800){
-		cacheImages(); //looks like we need to render the next section
-		contentHeight += 800;		
-	}
-}
-
-</script>
-
