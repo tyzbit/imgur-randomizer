@@ -2,144 +2,182 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title>Random Imgur generator -  Choose number of images - Best Imgur Roulette</title>
-	<meta name="Description" content="Choose the number of random images you see. Not affiliated with Imgur.">
+	<title>Random Imgur Generator</title>
+	<meta name="Description" content="Generate imgur images randomly">
 	<script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
-	<script type='text/javascript' src='masonry.pkgd.min.js'></script>
+<!--	<script type='text/javascript' src='masonry.pkgd.min.js'></script> -->
 	<link rel="stylesheet" type="text/css" href="style.css" />
 <center>
 <div id=topbar>
 <div id=topbar_right></div>
 </div>
 <script type='text/javascript'>
-	imgurcache = new Array()
-	a=window.innerWidth;
-	b=window.innerHeight;
-	var loadimages = Math.round(( ( a * b ) * -.000002471085214138067 ) + 40.72076119301664);
-	function resized() {
-				a=window.innerWidth;
-				b=window.innerHeight;
-				loadimages = Math.round(( ( a * b ) * -.000002471085214138067 ) + 40.72076119301664);
-		}
-		$( window ).resize(function() {
-				resized();
-		});
-		$(window).blur(function(){
-			$('#stahp').click();
-		});
-		$(window).load(function(){
-		resized();
-		var Imgur = {
-			fetch: function(num) {
-				var self=this;
-				self.total=num;
-				self.done=0;
-				self.done2=0;
-				self.failures=0;
-				self.start=+new Date;
+// run when the window loads
+$(window).load(function(){
+// called when the user wants to start browsing
+	function browse(e) {
+		// start browsing
+		if ( e == 1 ) {
+			// fade the instructions
+			var flag = true;
+			$("#instructions").css( "opacity", "0");
+			$("#quit").css( "opacity", ".8");
+			$("img").css( "opacity", "1");
+			$("#quit").mouseenter(function() {
+				if (flag) {
+				$(this).css( "opacity", "1");
+				};
+			});
 
-				$('#images').empty();
-				for (var x = 0; x < num; x++) {
-					self.hunt(function(id) {
-						self.done++;
-						self.done2++;
-						self.skip=Math.floor((Math.random()*40)+25);
-						$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer'><img src='http://i.imgur.com/" + id + "s.png' width='10.5%' /></a>");
-						if(self.done2>self.skip) {
-							self.done2=0;
+			$("#quit").mouseleave(function() {
+				if(!flag) return;
+				$(this).css( "opacity", ".8");
+				});
+			$("#quit").click(function() {
+				flag = false;
+				$("img").css( "opacity", ".5");
+				browse(0);
+			});
+			// start by fetching one image to fill the <div>
+			Imgur.fetch(1);
+			// call the routine that will determine if it needs to pull more images to fill the <div>
+			browseVar = window.setInterval(function(){checkroutine()},50);
+		};
+		// stop browsing
+		if ( e == 0 ) {
+			window.clearInterval(browseVar);
+			$("#instructions").css( "opacity", "1");
+			$("#quit").css( "opacity", "0");
+			flag = !flag;
+		};
+	};
+// hunt for images, then add them to the <div>
+	var Imgur = {
+		// main routine, use when you want to add another random image
+		fetch: function(num) {
+			var self=this;
+			// for loop through the requested number of images
+			for (var x = 0; x < num; x++) {
+				// start the hunt, get back "id" which will be a valid imgur ID
+				self.hunt(function(id) {
+					// push the image and link to the <div>
+					// imgur accepts any id with .jpg, even if it's a gif or png
+					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer'><img src='http://i.imgur.com/" + id + "s.png' width='250px' /></a>");
+				});
+			}
+		},
+		// find a valid imgur id
+		hunt: function(cb) {
+			var self=this,
+				//get a random string, set it to the ID
+				id = self.random(5),
+				// try loading the image
+				img = new Image;
+					img.src = "http://i.imgur.com/"+id+"s.png";
+					img.onload = function() {
+						// check the dimensions of the image
+						if ((img.width==198 && img.height==160) || (img.width==161 && img.height==81)) {
+							// assume this is an imgur error image according to dimensions, and retry.
+							fail();
+						} else {
+							// return valid ID
+							cb(id);
 						}
-						//self.update();
-					});
-				}
-			},
-			update: function() {
-				var interval=new Date-this.start;
-				function speed(v) { return (~~(v/interval*1e5))/100; }
-				$('#info').html((this.done<this.total?"Loading.. "+this.done+"/"+this.total+" ("+this.failures+" failures"+") ":"Done. ")+"["+speed(this.failures+this.done)+" req/s - "+speed(this.done)+" img/s]");
-			},
-			
-			hunt: function(cb) {
-				var self=this,
-					id = self.random(5),
-					img = new Image;
-						//self.update();
-						img.src = "http://i.imgur.com/"+id+"s.png";
-						img.onload = function() {
-							if ((img.width==198 && img.height==160) || (img.width==161 && img.height==81)) {
-								// assume this is an imgur error image, and retry.
-								fail();
-							} else {
-								cb(id);
-							}
-						}
-						img.onerror = fail; // no escape.
-				function fail() {
-					self.failures++;
-					//self.update();
-					self.hunt(cb);
-				}
-			},
-			random: function(len) {
-				var text = new Array();
-				var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-				for (var i=0; i < len; i++) {
-					imgurchar = possible.charAt(Math.floor(Math.random() * possible.length));
-					if (text.indexOf(imgurchar) == -1) {
-						text.push(imgurchar);
-					} else {
-						i--;
 					}
-				}
-				text = text.join('');
-				if (imgurcache.indexOf(text) == -1) {
-					imgurcache.push(text);
-					return text;
+					img.onerror = fail; // no escape.
+			// if it fails to find an ID, try again
+			function fail() {
+				self.hunt(cb);
+			}
+		},
+		// generate a random imgur ID using a set of alphanumeric characters
+		random: function(len) {
+			var imgurcache = new Array();
+			var text = new Array();
+			// possible characters
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			// for until len is 0
+			for (var i=0; i < len; i++) {
+				imgurchar = possible.charAt(Math.floor(Math.random() * possible.length));
+				if (text.indexOf(imgurchar) == -1) {
+					text.push(imgurchar);
 				} else {
-					self.random(5);
-					return false;
+					i--;
 				}
 			}
-		};
+			text = text.join('');
+			if (imgurcache.indexOf(text) == -1) {
+				imgurcache.push(text);
+				return text;
+			} else {
+				self.random(5);
+				return false;
+			}
+		}
+	};
 
-		$('#random').bind('click', function(e) {
-			Imgur.fetch(loadimages);
-		});
-		$('#automatic').bind('click', function() {
-			refreshVar = window.setInterval(function(){Imgur.fetch(loadimages)},10000);
-			Imgur.fetch(loadimages);
-	                $('img').live('click', function() {
-	                        $('#stahp').click();
-	               	});
-		});
-                $('#minutes').bind('click', function() {
-                        refreshVar = window.setInterval(function(){Imgur.fetch(loadimages)},180000);
-                        Imgur.fetch(loadimages);
-                        $('img').live('click', function() {
-                                $('#stahp').click();
-                        });
-                });
-		$('#stahp').bind('click', function(e) {
-			window.clearInterval(refreshVar);
-		});
-		$(document).keyup(function(e) {
-			if (e.keyCode == 27) { $('#stahp').click(); }
-			if (e.keyCode == 82) { $('#random').click(); }
-			if (e.keyCode == 69) { resized() }
-		});
+//below taken from http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
+function getScrollXY() {
+    var scrOfX = 0, scrOfY = 0;
+    if( typeof( window.pageYOffset ) == 'number' ) {
+        //Netscape compliant
+        scrOfY = window.pageYOffset;
+        scrOfX = window.pageXOffset;
+    } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+        //DOM compliant
+        scrOfY = document.body.scrollTop;
+        scrOfX = document.body.scrollLeft;
+    } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+        //IE6 standards compliant mode
+        scrOfY = document.documentElement.scrollTop;
+        scrOfX = document.documentElement.scrollLeft;
+    }
+    return [ scrOfX, scrOfY ];
+}
+
+//taken from http://james.padolsey.com/javascript/get-document-height-cross-browser/
+function getDocHeight() {
+    var D = document;
+    return Math.max(
+        D.body.scrollHeight, D.documentElement.scrollHeight,
+        D.body.offsetHeight, D.documentElement.offsetHeight,
+        D.body.clientHeight, D.documentElement.clientHeight
+    );
+}
+
+// routine that is called often to check if we need more images loaded
+function checkroutine() {
+	// check if the document has scrolled within 200 px of the bottom
+    if (getDocHeight() < getScrollXY()[1] + window.innerHeight + 200) {
+		// get another image
+		Imgur.fetch(1);
+    }
+};
+	// check for pressed keys
+	$(document).keyup(function(e) {
+		// escape
+		if (e.keyCode == 27) { browse(0); }
+		// R
+		if (e.keyCode == 82) { browse(1); }
 	});
+
+	$("#instructions").click(function() {
+		browse(1);
+	});
+	
+});
 </script></head>
 	<body>
 	<div id="images" class="js-masonry" data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }'>
 </div>
-<div id="controls">
-	<button id="random">click here to load (more) random images</button><br>
-	<button id="automatic">automatically refresh every 10 seconds</button>
-	<button id="minutes">automatically refresh every 3 minutes</button><br>
-	<button id="stahp">stop refreshing</button><br>
-	alternate: R to reload, ESC or click an image to clear any auto refresh
+<div id="quit">
+Click here to disable randomizer
+</div>
+<div id="instructions">
+Click here to enable randomizer...
 </div>
 <span id="disclaimer">
-		<p>By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS</p>
+		By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS
 </span>
 </body>
 </html>
