@@ -29,6 +29,8 @@ var firstrun = 1;
 	function browse(e) {
 		// start browsing
 		if ( e == 1 ) {
+			// send analytics that the user started browsing
+			ga('send', 'event', 'click', 'Started browsing');
 			// allow mouseover effects on the disable button
 			flag = true;
 			// fade out instructions
@@ -61,6 +63,8 @@ var firstrun = 1;
 		};
 		// stop browsing
 		if ( e == 0 ) {
+			// send analytics that the user stopped browsing
+			ga('send', 'event', 'click', 'Stopped browsing');
 			// darken the page
 			$("img").css( "opacity", ".5");
 			// this is what stops loading new images
@@ -207,20 +211,19 @@ function changesize(size) {
 	});
 	// if the user clicks the instructions, start loading new images
 	$("#instructions").click(function() {
-		ga('send', 'event', 'click', 'Started browsing');
 		browse(1);
 	});
 	// call a function with the text of the link the user clicked to set the size preference
 	$("#size a").click(function() {
 		size = $(this).text();
-		ga('send', 'event', 'click', 'changed size to' + size);
+		ga('send', 'event', 'click', 'Changed size to ' + size);
 		changesize(size);
 	});
 	
 	// when a user clicks on an image, send an analytics event
-	$("img").click(function() {
-		ga('send', 'event', 'click', 'clicked image');
-		});
+	$("#item").click(function() {
+		ga('send', 'event', 'click', 'Clicked image');
+	});
 });
 </script></head>
 <body>
