@@ -16,6 +16,8 @@
 $(window).load(function(){
 
 var size = "250px";
+var flag = false;
+var firstrun = 1;
 //
 // functions
 //
@@ -24,41 +26,51 @@ var size = "250px";
 	function browse(e) {
 		// start browsing
 		if ( e == 1 ) {
-			// fade the instructions
-			var flag = true;
+			// allow mouseover effects on the disable button
+			flag = true;
+			// fade out instructions
 			$("#instructions").css( "opacity", "0");
+			// fade in disable button
 			$("#quit").css( "opacity", ".8");
+			// make sure images are opaque
 			$("img").css( "opacity", "1");
 			// make it so mouseover on the top box fades it in and out
 			$("#quit").mouseenter(function() {
+				// "flag" is set when the user disables loading new images
 				if (flag) {
 				$(this).css( "opacity", "1");
 				};
 			});
-
 			$("#quit").mouseleave(function() {
-				if(!flag) return;
-				$(this).css( "opacity", ".8");
+				if(flag) {
+					$(this).css( "opacity", ".8");
+				}
 				});
 			$("#quit").click(function() {
 				browse(0);
 			});
-			// set default image width (medium)
-			changesize("medium");
-			
-			// start by fetching one image to fill the <div>
-			Imgur.fetch(1,size);
+			// set default image width (medium) only if this is the first run
+			if ( firstrun == 1) {
+				changesize("medium");
+			}
 			// call the routine that will determine if it needs to pull more images to fill the <div>
 			browseVar = window.setInterval(function(){checkroutine()},50);
 		};
 		// stop browsing
 		if ( e == 0 ) {
-			flag = false;
+			// darken the page
 			$("img").css( "opacity", ".5");
+			// this is what stops loading new images
 			window.clearInterval(browseVar);
+			// bring back the instructions, but with different text
+			$("#instructions").html( "Click here to resume");
 			$("#instructions").css( "opacity", "1");
+			// fade out the quit option
 			$("#quit").css( "opacity", "0");
-			flag = !flag;
+			// disable the quit effects
+			flag = false;
+			// set this global var so when the user re-enables the size preference is not changed
+			firstrun = 0;
 		};
 	};
 // hunt for images, then add them to the <div>
@@ -165,10 +177,12 @@ function checkroutine() {
     }
 	// make sure the images are the right size
 	changesize(size);
+	$("#disclaimer").replaceWith( "<div id='disclaimer'> Flag" + flag );
 };
 
 function changesize(size) {
 	if ( size == "small" ) {
+		// default imgur thumbnail is 90px anyway
 		$("img").css( "width", "90px");
 	};
 	if ( size == "medium" ) {
@@ -189,11 +203,11 @@ function changesize(size) {
 		// R
 		if (e.keyCode == 82) { browse(1); }
 	});
-
+	// if the user clicks the instructions, start loading new images
 	$("#instructions").click(function() {
 		browse(1);
 	});
-	
+	// call a function with the text of the link the user clicked to set the size preference
 	$("#size a").click(function() {
 		size = $(this).text();
 		changesize(size);
@@ -207,13 +221,13 @@ function changesize(size) {
 Click here to disable randomizer
 </div>
 <div id="instructions">
-Click here to enable randomizer...
+Click here to enable randomizer
 </div>
 <span id="disclaimer">
 By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS</a>
 </span>
 <span id="size">
-<a href="#">small</a> <a href="#">medium</a> <a href="#">large</a>
+image size: <a href="#">small</a> <a href="#">medium</a> <a href="#">large</a>
 </span>
 </body>
 </html>
