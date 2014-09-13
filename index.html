@@ -92,7 +92,7 @@ var firstrun = 1;
 					// push the image and link to the <div>
 					// imgur accepts any id with .jpg, even if it's a gif or png
 					// <id>s.png is a smaller, thumbnail-sized image
-					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer'><img src='http://i.imgur.com/" + id + "s.png' width='" + size + "' /></a>");
+					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + size + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
 				});
 			}
 		},
@@ -198,6 +198,7 @@ function changesize(size) {
 		$("img").css( "width", "250px");
 	};
 };
+
 //
 // event handlers
 //
@@ -218,11 +219,6 @@ function changesize(size) {
 		size = $(this).text();
 		ga('send', 'event', 'click', 'Changed size to ' + size);
 		changesize(size);
-	});
-	
-	// when a user clicks on an image, send an analytics event
-	$("#item").click(function() {
-		ga('send', 'event', 'click', 'Clicked image');
 	});
 });
 </script></head>
