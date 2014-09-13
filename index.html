@@ -207,16 +207,18 @@ function changesize(size) {
 	});
 	// if the user clicks the instructions, start loading new images
 	$("#instructions").click(function() {
+		_gaq.push(['_trackEvent', 'Clicked', 'Started browsing']);
 		browse(1);
 	});
 	// call a function with the text of the link the user clicked to set the size preference
 	$("#size a").click(function() {
 		size = $(this).text();
+		_gaq.push(['_trackEvent', 'Clicked', 'Changed Size', size ]);
 		changesize(size);
 	});
 	
 	// when a user clicks on an image, send an analytics event
-	$("img").click(riveted.trigger(););
+	$("img").click(_gaq.push(['_trackEvent', 'Clicked', 'Image Clicked']););
 });
 </script></head>
 <body>
