@@ -19,7 +19,6 @@
 $(window).load(function(){
 
 var size = "250px";
-var flag = false;
 var firstrun = 1;
 //
 // functions
@@ -31,29 +30,10 @@ var firstrun = 1;
 		if ( e == 1 ) {
 			// send analytics that the user started browsing
 			ga('send', 'event', 'click', 'Started browsing');
-			// allow mouseover effects on the disable button
-			flag = true;
 			// fade out instructions
 			$("#instructions").css( "opacity", "0");
-			// fade in disable button
-			$("#quit").css( "opacity", ".8");
 			// make sure images are opaque
 			$("img").css( "opacity", "1");
-			// make it so mouseover on the top box fades it in and out
-			$("#quit").mouseenter(function() {
-				// "flag" is set when the user disables loading new images
-				if (flag) {
-				$(this).css( "opacity", "1");
-				};
-			});
-			$("#quit").mouseleave(function() {
-				if(flag) {
-					$(this).css( "opacity", ".8");
-				}
-				});
-			$("#quit").click(function() {
-				browse(0);
-			});
 			// set default image width (medium) only if this is the first run
 			if ( firstrun == 1) {
 				changesize("medium");
@@ -72,10 +52,6 @@ var firstrun = 1;
 			// bring back the instructions, but with different text
 			$("#instructions").html( "Click here to resume");
 			$("#instructions").css( "opacity", "1");
-			// fade out the quit option
-			$("#quit").css( "opacity", "0");
-			// disable the quit effects
-			flag = false;
 			// set this global var so when the user re-enables the size preference is not changed
 			firstrun = 0;
 		};
