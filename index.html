@@ -8,7 +8,7 @@
 	<script type='text/javascript' src='analytics.js'></script>
 <!--	<script type='text/javascript' src='masonry.pkgd.min.js'></script> -->
 	<script type='text/javascript' src='riveted.min.js'></script>
-	<script>riveted.init();</script>
+	<script>riveted.init({idleTimeout: 120});</script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 <center>
 <div id=topbar>
@@ -214,6 +214,9 @@ function changesize(size) {
 		size = $(this).text();
 		changesize(size);
 	});
+	
+	// when a user clicks on an image, send an analytics event
+	$("img").click(riveted.trigger(););
 });
 </script></head>
 <body>
