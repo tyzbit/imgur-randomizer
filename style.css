@@ -44,26 +44,6 @@ img:hover{
 	-webkit-transition: opacity .75s;
 	cursor: pointer;
 }
-#quit{
-	position:fixed;
-	border:3px solid #111;
-	top:10%;
-	left:50%;
-	width: 40%;
-	margin-left:-20%;
-	z-index:1;
-	font-size:50px;
-	background: #111;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-box-shadow: 5px 5px 15px #000;
-	-webkit-box-shadow: 5px 5px 15px #000;
-	opacity: 0;
-	transition: opacity .5s;
-	-moz-transition: opacity .5s;
-	-webkit-transition: opacity .5s;
-	cursor: pointer;
-}
 #disclaimer{
 	position:fixed;
 	right:5px;

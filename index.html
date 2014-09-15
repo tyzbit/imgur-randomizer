@@ -7,8 +7,6 @@
 	<script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
 	<script type='text/javascript' src='analytics.js'></script>
 <!--	<script type='text/javascript' src='masonry.pkgd.min.js'></script> -->
-	<script type='text/javascript' src='riveted.min.js'></script>
-	<script>riveted.init({idleTimeout: 120, reportInterval: 10});</script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 <center>
 <div id=topbar>
@@ -20,6 +18,7 @@ $(window).load(function(){
 
 var size = "250px";
 var firstrun = 1;
+
 //
 // functions
 //
@@ -38,6 +37,8 @@ var firstrun = 1;
 			if ( firstrun == 1) {
 				changesize("medium");
 			}
+			// set this global var so when the user re-enables the size preference is not changed
+			firstrun = 0;
 			// call the routine that will determine if it needs to pull more images to fill the <div>
 			browseVar = window.setInterval(function(){checkroutine()},50);
 		};
@@ -52,8 +53,7 @@ var firstrun = 1;
 			// bring back the instructions, but with different text
 			$("#instructions").html( "Click here to resume");
 			$("#instructions").css( "opacity", "1");
-			// set this global var so when the user re-enables the size preference is not changed
-			firstrun = 0;
+			$("#images").empty();
 		};
 	};
 // hunt for images, then add them to the <div>
@@ -153,8 +153,8 @@ function getDocHeight() {
 
 // routine that is called often to check if we need more images loaded
 function checkroutine() {
-	// check if the document has scrolled within 200 px of the bottom
-    if (getDocHeight() < getScrollXY()[1] + window.innerHeight + 200) {
+	// check if the document has scrolled within 400 px of the bottom
+    if (getDocHeight() < getScrollXY()[1] + window.innerHeight + 400) {
 		// get another image
 		Imgur.fetch(1,size);
     }
@@ -183,8 +183,6 @@ function changesize(size) {
 	$(document).keyup(function(e) {
 		// escape
 		if (e.keyCode == 27) { browse(0); }
-		// R
-		if (e.keyCode == 82) { browse(1); }
 	});
 	// if the user clicks the instructions, start loading new images
 	$("#instructions").click(function() {
@@ -200,9 +198,6 @@ function changesize(size) {
 </script></head>
 <body>
 <div id="images" class="js-masonry" data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }'>
-</div>
-<div id="quit">
-Click here to disable randomizer
 </div>
 <div id="instructions">
 Click here to enable randomizer
