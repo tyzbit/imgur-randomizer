@@ -2,6 +2,8 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="description" content="Random Pics from Imgur">
+	<meta name="keywords" content="randpics,imgur,random imgur,randomizer,reddit,randimg,random pics,random images,bored">
 	<title>Random Imgur Generator</title>
 	<meta name="Description" content="Generate imgur images randomly">
 	<script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
@@ -51,7 +53,7 @@ var firstrun = 1;
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
 			// bring back the instructions, but with different text
-			$("#instructions").html( "Click here to resume");
+			$("#instructions").html( "click here to resume");
 			$("#instructions").css( "opacity", "1");
 			$("#images").empty();
 		};
@@ -153,11 +155,17 @@ function getDocHeight() {
 
 // routine that is called often to check if we need more images loaded
 function checkroutine() {
+	// set variable that determines how many pixes of screen needs images
+	var readahead = 400;
+	if (window.matchMedia("(orientation: portrait)").matches) {
+		readahead = 800;
+	}
 	// check if the document has scrolled within 400 px of the bottom
-    if (getDocHeight() < getScrollXY()[1] + window.innerHeight + 400) {
+    if (getDocHeight() < getScrollXY()[1] + window.innerHeight + readahead) {
 		// get another image
 		Imgur.fetch(1,size);
     }
+
 	// make sure the images are the right size
 	changesize(size);
 };
@@ -165,7 +173,7 @@ function checkroutine() {
 function changesize(size) {
 	if ( size == "small" ) {
 		// default imgur thumbnail is 90px anyway
-		$("img").css( "width", "90px");
+		$("img").css( "width", "90");
 	};
 	if ( size == "medium" ) {
 		$("img").css( "width", "150px");
@@ -200,7 +208,7 @@ function changesize(size) {
 <div id="images" class="js-masonry" data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }'>
 </div>
 <div id="instructions">
-Click here to enable randomizer
+feed me random
 </div>
 <span id="disclaimer">
 By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS</a>
