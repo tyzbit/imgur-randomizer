@@ -20,6 +20,7 @@ $(window).load(function(){
 
 var size = "250px";
 var firstrun = 1;
+var imageRequests = 0;
 
 //
 // functions
@@ -71,6 +72,8 @@ var firstrun = 1;
 					// imgur accepts any id with .jpg, even if it's a gif or png
 					// <id>s.png is a smaller, thumbnail-sized image
 					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + size + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
+					// decrement the amount of requested images
+					imageRequests--;
 				});
 			}
 		},
@@ -162,8 +165,12 @@ function checkroutine() {
 	}
 	// check if the document has scrolled within 400 px of the bottom
     if (getDocHeight() < getScrollXY()[1] + window.innerHeight + readahead) {
-		// get another image
-		Imgur.fetch(1,size);
+		if (imageRequests < 20)	{
+			// get another image
+			Imgur.fetch(1,size);
+			// increment the amount of requested images
+			imageRequests++;
+		}
     }
 
 	// make sure the images are the right size
