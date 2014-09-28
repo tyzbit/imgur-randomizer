@@ -18,8 +18,7 @@
 // run when the window loads
 $(window).load(function(){
 
-var size = "250px";
-var firstrun = 1;
+var imagesize = "150px";
 var imageRequests = 0;
 
 //
@@ -36,12 +35,7 @@ var imageRequests = 0;
 			$("#instructions").css( "opacity", "0");
 			// make sure images are opaque
 			$("img").css( "opacity", "1");
-			// set default image width (medium) only if this is the first run
-			if ( firstrun == 1) {
-				changesize("medium");
-			}
 			// set this global var so when the user re-enables the size preference is not changed
-			firstrun = 0;
 			// call the routine that will determine if it needs to pull more images to fill the <div>
 			browseVar = window.setInterval(function(){checkroutine()},50);
 		};
@@ -71,7 +65,7 @@ var imageRequests = 0;
 					// push the image and link to the <div>
 					// imgur accepts any id with .jpg, even if it's a gif or png
 					// <id>s.png is a smaller, thumbnail-sized image
-					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + size + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
+					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
 					// decrement the amount of requested images
 					imageRequests--;
 				});
@@ -174,19 +168,22 @@ function checkroutine() {
     }
 
 	// make sure the images are the right size
-	changesize(size);
+	//changesize(size);
 };
 
 function changesize(size) {
 	if ( size == "small" ) {
 		// default imgur thumbnail is 90px anyway
-		$("img").css( "width", "90");
+		$("img").css( "width", "90px");
+		imagesize="90px";
 	};
 	if ( size == "medium" ) {
 		$("img").css( "width", "150px");
+		imagesize="150px";
 	};
 	if ( size == "large" ) {
 		$("img").css( "width", "250px");
+		imagesize="250px";
 	};
 };
 
