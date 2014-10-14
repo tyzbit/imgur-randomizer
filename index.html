@@ -6,7 +6,7 @@
 	<meta name="keywords" content="randpics,imgur,random imgur,randomizer,reddit,randimg,random pics,random images,bored">
 	<title>Random Imgur Generator</title>
 	<meta name="Description" content="Generate imgur images randomly">
-	<script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script>
+	<script type='text/javascript' src='https://code.jquery.com/jquery-1.11.1.js'></script>
 	<script type='text/javascript' src='analytics.js'></script>
 <!--	<script type='text/javascript' src='masonry.pkgd.min.js'></script> -->
 	<link rel="stylesheet" type="text/css" href="style.css" />
@@ -65,7 +65,7 @@ var imageRequests = 0;
 					// push the image and link to the <div>
 					// imgur accepts any id with .jpg, even if it's a gif or png
 					// <id>s.png is a smaller, thumbnail-sized image
-					$('#images').append("<a href='http://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
+					$('#images').append("<a href='https://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
 					// decrement the amount of requested images
 					imageRequests--;
 				});
