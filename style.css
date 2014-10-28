@@ -5,33 +5,32 @@
 body{
 	background:#222;
 	color:#666;
-	width: auto;
 }
 a{
 	color:#444;
 }
 img{
-	border:.4em solid #444;
+	margin: .2em; 
+	transition: opacity .1s ease-in-out;
+	-moz-transition: opacity .1s ease-in-out;
+	-webkit-transition: opacity .1s ease-in-out;
+	-moz-box-shadow: 0em 0em .5em .2em #000;
+	-webkit-box-shadow: 0em 0em .5em .2em #000;
 	-moz-border-radius: .2em;
 	-webkit-border-radius: .2em;
-	margin: .2%;
-	transition: opacity .5s ease-in-out;
-	-moz-transition: opacity .5s ease-in-out;
-	-webkit-transition: opacity .5s ease-in-out;
-	-moz-box-shadow: .2em .2em .6em #000;
-	-webkit-box-shadow: .2em .2em .6em #000;
 }
-img:hover{
-	border-color:#888;
-	-moz-box-shadow: 0px 0px 1.2em #111;
-	-webkit-box-shadow: 0px 0px 1.2em #111;
+.item{
+	opacity:.8;
+}
+.item:hover{
+	opacity:1;
 }
 #instructions{
 	position:fixed;
 	border:.05em solid #111;
 	bottom:7%;
 	left:50%;
-	width: 8em;
+	width:8em;
 	margin-left:-4em;
 	z-index:1;
 	font-size:4em;
@@ -46,12 +45,17 @@ img:hover{
 	-webkit-transition: opacity .75s;
 	cursor: pointer;
 }
+.resume{
+	opacity:1 !important;
+	width:10em !important;
+	margin-left:-5em !important;
+}
 #disclaimer{
 	position:fixed;
 	right:.2em;
 	bottom:.4em;
 	background: #111;
-	opacity: .6;
+	opacity:.6;
 	width:32em;
 	-moz-box-shadow: .2em .2em .6em #000;
 	-webkit-box-shadow: .2em .2em .6em #000;

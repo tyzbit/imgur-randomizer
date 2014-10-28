@@ -8,17 +8,12 @@
 	<meta name="Description" content="Generate imgur images randomly">
 	<script type='text/javascript' src='https://code.jquery.com/jquery-1.11.1.js'></script>
 	<script type='text/javascript' src='analytics.js'></script>
-<!--	<script type='text/javascript' src='masonry.pkgd.min.js'></script> -->
 	<link rel="stylesheet" type="text/css" href="style.css" />
-<center>
-<div id=topbar>
-<div id=topbar_right></div>
-</div>
 <script type='text/javascript'>
-// run when the window loads
-$(window).load(function(){
+// run when the document is ready, which is earlier than window.onload
+$(document).ready(function() {
 
-var imagesize = "150px";
+var imagesize = "180px";
 var imageRequests = 0;
 
 //
@@ -33,6 +28,8 @@ var imageRequests = 0;
 			ga('send', 'event', 'click', 'Started browsing');
 			// fade out instructions
 			$("#instructions").css( "opacity", "0");
+			// remove the "resume" class (if set)
+			$("#instructions").removeClass("resume");
 			// make sure images are opaque
 			$("img").css( "opacity", "1");
 			// set this global var so when the user re-enables the size preference is not changed
@@ -48,8 +45,8 @@ var imageRequests = 0;
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
 			// bring back the instructions, but with different text
-			$("#instructions").html( "click here to resume");
-			$("#instructions").css( "opacity", "1");
+			$("#instructions").html( "click here to resume" );
+			$("#instructions").addClass("resume");
 			$("#images").empty();
 		};
 	};
@@ -65,7 +62,7 @@ var imageRequests = 0;
 					// push the image and link to the <div>
 					// imgur accepts any id with .jpg, even if it's a gif or png
 					// <id>s.png is a smaller, thumbnail-sized image
-					$('#images').append("<a href='https://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "' onclick=\"ga('send', 'event', 'click', 'Clicked image')\"/></a>");
+					$('#images').append("<a href='https://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "'/></a>");
 					// decrement the amount of requested images
 					imageRequests--;
 				});
@@ -166,9 +163,6 @@ function checkroutine() {
 			imageRequests++;
 		}
     }
-
-	// make sure the images are the right size
-	//changesize(size);
 };
 
 function changesize(size) {
@@ -178,12 +172,12 @@ function changesize(size) {
 		imagesize="90px";
 	};
 	if ( size == "medium" ) {
-		$("img").css( "width", "150px");
-		imagesize="150px";
+		$("img").css( "width", "180px");
+		imagesize="180px";
 	};
 	if ( size == "large" ) {
-		$("img").css( "width", "250px");
-		imagesize="250px";
+		$("img").css( "width", "270px");
+		imagesize="270px";
 	};
 	$("html, body").animate({ scrollTop: $(document).height() }, 10)
 };
@@ -207,19 +201,25 @@ function changesize(size) {
 		ga('send', 'event', 'click', 'Changed size to ' + size);
 		changesize(size);
 	});
+	
+	// Detect when an image is clicked
+	$( "body" ).on( "click", ".item", function () {
+		ga('send', 'event', 'click', 'Clicked image');
+	 });
 });
 </script></head>
 <body>
-<div id="images" class="js-masonry" data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }'>
-</div>
+<center>
+<div id="images"></div>
 <div id="instructions">
 feed me random
 </div>
 <span id="disclaimer">
-By using this service, you agree to <a href="http://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="http://imgur.com/tos">TOS</a>
+By using this service, you agree to <a href="https://imgur.com/removalrequest/">report</a> anything that violates Imgur's <a href="https://imgur.com/tos">TOS</a>
 </span>
 <span id="size">
 image size: <a href="#">small</a> <a href="#">medium</a> <a href="#">large</a>
 </span>
+</center>
 </body>
 </html>
