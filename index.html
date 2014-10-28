@@ -26,10 +26,12 @@ var imageRequests = 0;
 		if ( e == 1 ) {
 			// send analytics that the user started browsing
 			ga('send', 'event', 'click', 'Started browsing');
-			// fade out instructions
+			// fade out the instructions
 			$("#instructions").css( "opacity", "0");
-			// remove the "resume" class (if set)
-			$("#instructions").removeClass("resume");
+			// remove the instructions from the DOM on a delay
+			window.setTimeout( function () {
+				$("#instructions").remove();
+			}, 750);
 			// make sure images are opaque
 			$("img").css( "opacity", "1");
 			// set this global var so when the user re-enables the size preference is not changed
@@ -44,10 +46,9 @@ var imageRequests = 0;
 			$("img").css( "opacity", ".5");
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
-			// bring back the instructions, but with different text
-			$("#instructions").html( "click here to resume" );
-			$("#instructions").addClass("resume");
-			$("#images").empty();
+			// Notify the user they need to refresh to continue
+			$("body").append("<div style=\"font-size: 6em; margin-left:3em;\">You need to refresh to continue</div>");
+			clearVar = window.setInterval(function(){$("#images").empty()},100);
 		};
 	};
 // hunt for images, then add them to the <div>
