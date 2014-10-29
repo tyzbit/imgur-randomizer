@@ -9,219 +9,228 @@
 	<script type='text/javascript' src='analytics.js'></script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script type='text/javascript'>
-		
-		// run when the document is ready, which is earlier than window.onload
-		$(document).ready(function() {
-		
-		var imagesize = "180px";
-		var imageRequests = 0;
-		
-		// style to show instructions
-		var showstyle = {
-			display : "block",
-			opacity : "1"
-		};
 
-		//
-		// functions
-		//
-		
-		// called when the user wants to start browsing
-			function browse(e) {
-				// start browsing
-				if ( e == 1 ) {
-					// send analytics that the user started browsing
-					ga('send', 'event', 'click', 'Started browsing');
-					// fade out the instructions
-					$("#instructions").css( "opacity", "0");
-					// remove the instructions from the DOM on a delay
-					window.setTimeout( function () {
-						$("#instructions").css('display', 'none');
-					}, 750);
-					// make sure images are opaque
-					$("#images").css( showstyle );
-					// set variable that determines how many pixels of screen needs images
-					var readahead = 400;
-					// load more images if the device is in portrait because the images will generally be bigger
-					if (window.matchMedia("(orientation: portrait)").matches) {
-						readahead = 800;
-					}
-					// set this global var so when the user re-enables the size preference is not changed
-					// call the routine that will determine if it needs to pull more images to fill the <div>
-					browseVar = window.setInterval(function(){checkroutine(readahead)},50);
-				};
-				// stop browsing
-				if ( e == 0 ) {
-					// send analytics that the user stopped browsing
-					ga('send', 'event', 'click', 'Stopped browsing');
-					// this is what stops loading new images
-					window.clearInterval(browseVar);
-					// Change the instructions text
-					$("#instructions").text("resume the random");
-					// apply style to show the instructions
-					$("#instructions").css( showstyle );
-					// hide the images
-					$("#images").css('display', 'none');
-				};
-			};
-		// hunt for images, then add them to the <div>
-			var Imgur = {
-				// main routine, use when you want to add another random image
-				fetch: function(num,size) {
-					var self=this;
-					// for loop through the requested number of images
-					for (var x = 0; x < num; x++) {
-						// start the hunt, get back "id" which will be a valid imgur ID
-						self.hunt(function(id) {
-							// push the image and link to the <div>
-							// imgur accepts any id with .jpg, even if it's a gif or png
-							// <id>s.png is a smaller, thumbnail-sized image
-							$('#images').append("<a href='https://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "'/></a>");
-							// decrement the amount of requested images
-							imageRequests--;
-						});
-					}
-				},
-				// find a valid imgur id
-				hunt: function(cb) {
-					var self=this,
-						//get a random string, set it to the ID
-						id = self.random(5),
-						// try loading the image
-						img = new Image;
-							img.src = "http://i.imgur.com/"+id+"s.png";
-							img.onload = function() {
-								// check the dimensions of the image
-								if ((img.width==198 && img.height==160) || (img.width==161 && img.height==81)) {
-									// assume this is an imgur error image according to dimensions, and retry.
-									fail();
-								} else {
-									// return valid ID
-									cb(id);
-								}
-							}
-							img.onerror = fail; // no escape.
-					// if it fails to find an ID, try again
-					function fail() {
-						self.hunt(cb);
-					}
-				},
-				// generate a random imgur ID using a set of alphanumeric characters
-				random: function(len) {
-					var imgurcache = new Array();
-					var text = new Array();
-					// possible characters
-					var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-					// for until len is 0
-					for (var i=0; i < len; i++) {
-						imgurchar = possible.charAt(Math.floor(Math.random() * possible.length));
-						if (text.indexOf(imgurchar) == -1) {
-							text.push(imgurchar);
+// run when the document is ready, which is earlier than window.onload
+$(document).ready(function() {
+	
+	//
+	// set up some variables
+	//
+	
+	//default image size
+	var imagesize = "180px";
+	//variable that holds the number of images currently requested to imgur
+	var imageRequests = 0;
+	
+	// style to show instructions
+	var showstyle = {
+		display : "block",
+		opacity : "1"
+	};
+	
+	// set variable that determines how many pixels of screen needs images
+	var readahead = 400;
+	// load more images if the device is in portrait because the images will generally be bigger
+	if (window.matchMedia("(orientation: portrait)").matches) {
+		readahead = 800;
+	}
+	
+	//
+	// functions
+	//
+	
+	// called when the user wants to start browsing
+	function browse(e) {
+		// start browsing
+		if ( e == 1 ) {
+			// send analytics that the user started browsing
+			ga('send', 'event', 'click', 'Started browsing');
+			// fade out the instructions
+			$("#instructions").css( "opacity", "0");
+			// remove the instructions from the DOM on a delay
+			window.setTimeout( function () {
+				$("#instructions").css('display', 'none');
+			}, 750);
+			// unhide the images
+			$("#images").css( showstyle );
+			// scroll to the bottom
+			$("html, body").animate({ scrollTop: $(document).height() }, 10)
+			// set this global var so when the user re-enables the size preference is not changed
+			// call the routine that will determine if it needs to pull more images to fill the <div>
+			browseVar = window.setInterval(function(){checkroutine(readahead)},50);
+		};
+		// stop browsing
+		if ( e == 0 ) {
+			// send analytics that the user stopped browsing
+			ga('send', 'event', 'click', 'Stopped browsing');
+			// this is what stops loading new images
+			window.clearInterval(browseVar);
+			// Change the instructions text
+			$("#instructions").text("resume the random");
+			// apply style to show the instructions
+			$("#instructions").css( showstyle );
+			// hide the images
+			$("#images").css('display', 'none');
+		};
+	};
+	// hunt for images, then add them to the <div>
+	var Imgur = {
+		// main routine, use when you want to add another random image
+		fetch: function(num,size) {
+			var self=this;
+			// for loop through the requested number of images
+			for (var x = 0; x < num; x++) {
+				// start the hunt, get back "id" which will be a valid imgur ID
+				self.hunt(function(id) {
+					// push the image and link to the <div>
+					// imgur accepts any id with .jpg, even if it's a gif or png
+					// <id>s.png is a smaller, thumbnail-sized image
+					$('#images').append("<a href='https://i.imgur.com/" + id + ".jpg' class='item' id='i' target='_blank' rel='noreferrer' ><img src='http://i.imgur.com/" + id + "s.png' width='" + imagesize + "'/></a>");
+					// decrement the amount of requested images
+					imageRequests--;
+				});
+			}
+		},
+		// find a valid imgur id
+		hunt: function(cb) {
+			var self=this,
+				//get a random string, set it to the ID
+				id = self.random(5),
+				// try loading the image
+				img = new Image;
+					img.src = "http://i.imgur.com/"+id+"s.png";
+					img.onload = function() {
+						// check the dimensions of the image
+						if ((img.width==198 && img.height==160) || (img.width==161 && img.height==81)) {
+							// assume this is an imgur error image according to dimensions, and retry.
+							fail();
 						} else {
-							i--;
+							// return valid ID
+							cb(id);
 						}
 					}
-					text = text.join('');
-					if (imgurcache.indexOf(text) == -1) {
-						imgurcache.push(text);
-						return text;
-					} else {
-						self.random(5);
-						return false;
-					}
-				}
-			};
-		
-		//below taken from http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
-		//get the amount the page has been scrolled
-		function getScrollXY() {
-			var scrOfX = 0, scrOfY = 0;
-			if( typeof( window.pageYOffset ) == 'number' ) {
-				//Netscape compliant
-				scrOfY = window.pageYOffset;
-				scrOfX = window.pageXOffset;
-			} else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
-				//DOM compliant
-				scrOfY = document.body.scrollTop;
-				scrOfX = document.body.scrollLeft;
-			} else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
-				//IE6 standards compliant mode
-				scrOfY = document.documentElement.scrollTop;
-				scrOfX = document.documentElement.scrollLeft;
+					img.onerror = fail; // no escape.
+			// if it fails to find an ID, try again
+			function fail() {
+				self.hunt(cb);
 			}
-			return [ scrOfX, scrOfY ];
-		}
-		
-		//taken from http://james.padolsey.com/javascript/get-document-height-cross-browser/
-		//get the document height
-		function getDocHeight() {
-			var D = document;
-			return Math.max(
-				D.body.scrollHeight, D.documentElement.scrollHeight,
-				D.body.offsetHeight, D.documentElement.offsetHeight,
-				D.body.clientHeight, D.documentElement.clientHeight
-			);
-		}
-		
-		// main routine that is called often to check if we need more images loaded
-		function checkroutine(readahead) {
-			// check if the document has scrolled within [readahead] pixels of the bottom
-			if (getDocHeight() < getScrollXY()[1] + window.innerHeight + readahead) {
-				if (imageRequests < 20)	{
-					// get another image
-					Imgur.fetch(1,size);
-					// increment the amount of requested images
-					imageRequests++;
+		},
+		// generate a random imgur ID using a set of alphanumeric characters
+		random: function(len) {
+			var imgurcache = new Array();
+			var text = new Array();
+			// possible characters
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			// for until len is 0
+			for (var i=0; i < len; i++) {
+				imgurchar = possible.charAt(Math.floor(Math.random() * possible.length));
+				if (text.indexOf(imgurchar) == -1) {
+					text.push(imgurchar);
+				} else {
+					i--;
 				}
 			}
+			text = text.join('');
+			if (imgurcache.indexOf(text) == -1) {
+				imgurcache.push(text);
+				return text;
+			} else {
+				self.random(5);
+				return false;
+			}
+		}
+	};
+	
+	//below taken from http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
+	//get the amount the page has been scrolled
+	function getScrollXY() {
+		var scrOfX = 0, scrOfY = 0;
+		if( typeof( window.pageYOffset ) == 'number' ) {
+			//Netscape compliant
+			scrOfY = window.pageYOffset;
+			scrOfX = window.pageXOffset;
+		} else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+			//DOM compliant
+			scrOfY = document.body.scrollTop;
+			scrOfX = document.body.scrollLeft;
+		} else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+			//IE6 standards compliant mode
+			scrOfY = document.documentElement.scrollTop;
+			scrOfX = document.documentElement.scrollLeft;
+		}
+		return [ scrOfX, scrOfY ];
+	}
+	
+	//taken from http://james.padolsey.com/javascript/get-document-height-cross-browser/
+	//get the document height
+	function getDocHeight() {
+		var D = document;
+		return Math.max(
+			D.body.scrollHeight, D.documentElement.scrollHeight,
+			D.body.offsetHeight, D.documentElement.offsetHeight,
+			D.body.clientHeight, D.documentElement.clientHeight
+		);
+	}
+	
+	// main routine that is called often to check if we need more images loaded
+	function checkroutine(readahead) {
+		// check if the document has scrolled within [readahead] pixels of the bottom
+		if (getDocHeight() < getScrollXY()[1] + window.innerHeight + readahead) {
+			if (imageRequests < 20)	{
+				// get another image
+				Imgur.fetch(1,size);
+				// increment the amount of requested images
+				imageRequests++;
+			}
+		}
+	};
+	
+	function changesize(size) {
+		if ( size == "small" ) {
+			// default imgur thumbnail is 90px anyway
+			$("img").css( "width", "90px");
+			imagesize="90px";
 		};
-		
-		function changesize(size) {
-			if ( size == "small" ) {
-				// default imgur thumbnail is 90px anyway
-				$("img").css( "width", "90px");
-				imagesize="90px";
-			};
-			if ( size == "medium" ) {
-				$("img").css( "width", "180px");
-				imagesize="180px";
-			};
-			if ( size == "large" ) {
-				$("img").css( "width", "250px");
-				imagesize="250px";
-			};
-			$("html, body").animate({ scrollTop: $(document).height() }, 10)
+		if ( size == "medium" ) {
+			$("img").css( "width", "180px");
+			imagesize="180px";
 		};
-		
-		//
-		// event handlers
-		//
-		
-			// check for pressed keys
-			$(document).keyup(function(e) {
-				// escape is a sort of "boss-key"
-				if (e.keyCode == 27) { browse(0); }
-			});
-			
-			// if the user clicks the instructions, start loading new images
-			$( "body" ).on( "click", "#instructions", function () {
-				browse(1);
-			});
-			
-			// call a function with the text of the link the user clicked to set the size preference
-			$("#size a").click(function() {
-				size = $(this).text();
-				ga('send', 'event', 'click', 'Changed size to ' + size);
-				changesize(size);
-			});
-			
-			// Detect when an image is clicked
-			$( "body" ).on( "click", ".item", function () {
-				ga('send', 'event', 'click', 'Clicked image');
-			});
-		});
+		if ( size == "large" ) {
+			$("img").css( "width", "250px");
+			imagesize="250px";
+		};
+		$("html, body").animate({ scrollTop: $(document).height() }, 10)
+	};
+	
+	//
+	// event handlers
+	//
+	
+	// check for pressed keys
+	$(document).keyup(function(e) {
+		// escape is a sort of "boss-key"
+		if (e.keyCode == 27) { browse(0); }
+	});
+	
+	// if the user clicks the instructions, start loading new images
+	$( "body" ).on( "click", "#instructions", function () {
+		browse(1);
+	});
+	
+	// call a function with the text of the link the user clicked to set the size preference
+	$( "#size" ).on( "click", "a", function () {
+		size = $(this).text();
+		ga('send', 'event', 'click', 'Changed size to ' + size);
+		changesize(size);
+	});
+	
+	// Detect when an image is clicked
+	$( "body" ).on( "click", ".item", function () {
+		ga('send', 'event', 'click', 'Clicked image');
+	});
+});
 
-	</script></head>
+</script></head>
 <body>
 <center>
 <div id="images"></div>
