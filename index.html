@@ -23,8 +23,8 @@ $(document).ready(function() {
 	var imageRequests = 0;
 	//scroll timer
 	var scrolltimer = 100;
-	//scroll toggle
-	var scrolltoggle = 1;
+	//scroll toggle tracker
+	var scrolltoggle = 0;
 	//scrolling hook
 	var scroller;
 	
@@ -50,7 +50,7 @@ $(document).ready(function() {
 		// start browsing
 		if ( e == 1 ) {
 			// send analytics that the user started browsing
-			ga('send', 'event', 'click', 'Started browsing');
+			ga('send', 'event', 'Started browsing');
 			// fade out the controls
 			$("#controls").css( "opacity", "0");
 			// fade out the instructions
@@ -70,8 +70,8 @@ $(document).ready(function() {
 		};
 		// stop browsing
 		if ( e == 0 ) {
-			// send analytics that the user stopped browsing
-			ga('send', 'event', 'click', 'Stopped browsing');
+			//tell the googles
+			ga('send', 'event', 'Stopped browsing');
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
 			// Change the controls text
@@ -216,17 +216,26 @@ $(document).ready(function() {
 	
 	//(re)set autoscrolling interval
 	function autoscroll(e) {
-		if (scrolltoggle == 1) {
+		//assume we need to enable or change the interval
+		if (scrolltoggle == 0) {
+			//clear out any old scrolling intervals
 			clearInterval(scroller);
+			//scroll by one pixel every "e" milliseconds
 			scroller = window.setInterval('window.scrollBy(0,1)', e);
-			scrolltoggle = 0;
-			ga('send', 'event', 'toggle', 'scrolling toggled on');
+			//enable the toggle so any other pieces of code knows we're autoscrolling
+			scrolltoggle = 1;
+			//tell the googles
+			ga('send', 'event', 'scrolling toggled on');
 		}
 		else {
+			//stop scrolling
 			clearInterval(scroller);
-			scrolltoggle = 1;
+			//toggle off the scrolling tracker
+			scrolltoggle = 0;
+			//re-set the scrolltimer to default
 			scrolltimer = 100;
-			ga('send', 'event', 'toggle', 'scrolling toggled off');
+			//tell the googles
+			ga('send', 'event', 'scrolling toggled off');
 		}
 	};
 		
@@ -241,22 +250,36 @@ $(document).ready(function() {
 			browse(0); autoscroll(0);
 		}
 		// a toggles on auto-scrolling
-		if (e.keyCode == 65) { 
+		if (e.keyCode == 65) {
 			autoscroll(scrolltimer);
 		}
-		//up speeds up scrolling (by reducing interval)
-		if (e.keyCode == 38) { 
-			e.preventDefault();
-			scrolltimer = scrolltimer / 2; console.log("Scrolltimer: " + scrolltimer);
-			scrolltoggle = 1;
-			autoscroll(scrolltimer);	
+		//down speeds up scrolling (by reducing interval)
+		if (e.keyCode == 40) {
+			//only do something if we've got autoscroll enabled
+			if (scrolltoggle == 1) {
+				//keep the key from doing it's normal stuff
+				e.preventDefault();
+				//cut the interval down by half
+				scrolltimer = scrolltimer / 2;
+				//toggle scrolling off so the function re-sets the background scroller
+				scrolltoggle = 0;
+				//call the autoscroller
+				autoscroll(scrolltimer);
+			}
 		}
-		//down slows down scrolling (by increasing interval)
-		if (e.keyCode == 40) { 
-			e.preventDefault();
-			scrolltimer = scrolltimer * 2; console.log("Scrolltimer: " + scrolltimer);
-			scrolltoggle = 1;
-			autoscroll(scrolltimer);
+		//up slows down scrolling (by increasing interval)
+		if (e.keyCode == 38) {
+			//only do something if we've got autoscroll enabled
+			if (scrolltoggle == 1) {
+				//keep the key from doing it's normal stuff
+				e.preventDefault();
+				//cut the interval down by half
+				scrolltimer = scrolltimer * 2;
+				//toggle scrolling off so the function re-sets the background scroller
+				scrolltoggle = 0;
+				//call the autoscroller
+				autoscroll(scrolltimer);
+			}
 		}
 	});
 	
@@ -267,14 +290,18 @@ $(document).ready(function() {
 	
 	// call a function with the text of the link the user clicked to set the size preference
 	$( "#size" ).on( "click", "a", function () {
+		//set size to the text of the link clicked
 		size = $(this).text();
-		ga('send', 'event', 'click', 'Changed size to ' + size);
+		//tell the googles
+		ga('send', 'event', 'Changed size to ' + size);
+		//change the size
 		changesize(size);
 	});
 	
 	// Detect when an image is clicked
 	$( "body" ).on( "click", ".item", function () {
-		ga('send', 'event', 'click', 'Clicked image');
+		//tell the googles
+		ga('send', 'event', 'Clicked image');
 	});
 });
 
