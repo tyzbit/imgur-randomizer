@@ -26,6 +26,21 @@ img{
 }
 #instructions{
 	position:fixed;
+	top:1em;
+	left:50%;
+	font-size:2em;
+	background:#111;
+	border:.05em solid #000;
+	width:20em;
+	margin-left:-10em;
+	-moz-border-radius: .5em;
+	-webkit-border-radius: .5em;
+	transition: opacity .75s;
+	-moz-transition: opacity .75s;
+	-webkit-transition: opacity .75s;
+}
+#controls{
+	position:fixed;
 	border:.05em solid #111;
 	bottom:7%;
 	left:50%;
@@ -99,9 +114,13 @@ img{
 	width:20em;
 	font-size:2em;
    }
-   #instructions
+   #controls
    {
    font-size:6em;
+   }
+   #instructions
+   {
+	display:none;
    }
    #size
    {

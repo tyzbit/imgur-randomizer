@@ -21,8 +21,14 @@ $(document).ready(function() {
 	var imagesize = "180px";
 	//variable that holds the number of images currently requested to imgur
 	var imageRequests = 0;
+	//scroll timer
+	var scrolltimer = 100;
+	//scroll toggle
+	var scrolltoggle = 1;
+	//scrolling hook
+	var scroller;
 	
-	// style to show instructions
+	// style to show controls
 	var showstyle = {
 		display : "block",
 		opacity : "1"
@@ -45,10 +51,13 @@ $(document).ready(function() {
 		if ( e == 1 ) {
 			// send analytics that the user started browsing
 			ga('send', 'event', 'click', 'Started browsing');
+			// fade out the controls
+			$("#controls").css( "opacity", "0");
 			// fade out the instructions
 			$("#instructions").css( "opacity", "0");
-			// remove the instructions from the DOM on a delay
+			// hide the controls and instructions on a delay
 			window.setTimeout( function () {
+				$("#controls").css('display', 'none');
 				$("#instructions").css('display', 'none');
 			}, 750);
 			// unhide the images
@@ -65,8 +74,10 @@ $(document).ready(function() {
 			ga('send', 'event', 'click', 'Stopped browsing');
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
-			// Change the instructions text
-			$("#instructions").text("resume the random");
+			// Change the controls text
+			$("#controls").text("resume the random");
+			// apply style to show the controls
+			$("#controls").css( showstyle );
 			// apply style to show the instructions
 			$("#instructions").css( showstyle );
 			// hide the images
@@ -185,6 +196,7 @@ $(document).ready(function() {
 		}
 	};
 	
+	//change the size of the images on the page
 	function changesize(size) {
 		if ( size == "small" ) {
 			// default imgur thumbnail is 90px anyway
@@ -202,18 +214,54 @@ $(document).ready(function() {
 		$("html, body").animate({ scrollTop: $(document).height() }, 10)
 	};
 	
+	//(re)set autoscrolling interval
+	function autoscroll(e) {
+		if (scrolltoggle == 1) {
+			clearInterval(scroller);
+			scroller = window.setInterval('window.scrollBy(0,1)', e);
+			scrolltoggle = 0;
+			ga('send', 'event', 'toggle', 'scrolling toggled on');
+		}
+		else {
+			clearInterval(scroller);
+			scrolltoggle = 1;
+			scrolltimer = 100;
+			ga('send', 'event', 'toggle', 'scrolling toggled off');
+		}
+	};
+		
 	//
 	// event handlers
 	//
 	
 	// check for pressed keys
-	$(document).keyup(function(e) {
-		// escape is a sort of "boss-key"
-		if (e.keyCode == 27) { browse(0); }
+	$(document).keydown(function(e) {
+		// escape is a sort of "boss-key", removes images and turns off autoscroll (if enabled)
+		if (e.keyCode == 27) { 
+			browse(0); autoscroll(0);
+		}
+		// a toggles on auto-scrolling
+		if (e.keyCode == 65) { 
+			autoscroll(scrolltimer);
+		}
+		//up speeds up scrolling (by reducing interval)
+		if (e.keyCode == 38) { 
+			e.preventDefault();
+			scrolltimer = scrolltimer / 2; console.log("Scrolltimer: " + scrolltimer);
+			scrolltoggle = 1;
+			autoscroll(scrolltimer);	
+		}
+		//down slows down scrolling (by increasing interval)
+		if (e.keyCode == 40) { 
+			e.preventDefault();
+			scrolltimer = scrolltimer * 2; console.log("Scrolltimer: " + scrolltimer);
+			scrolltoggle = 1;
+			autoscroll(scrolltimer);
+		}
 	});
 	
-	// if the user clicks the instructions, start loading new images
-	$( "body" ).on( "click", "#instructions", function () {
+	// if the user clicks the controls, start loading new images
+	$( "body" ).on( "click", "#controls", function () {
 		browse(1);
 	});
 	
@@ -235,6 +283,12 @@ $(document).ready(function() {
 <center>
 <div id="images"></div>
 <div id="instructions">
+instructions:<br>
+<br>
+ESC = oh shit key<br>
+A = autoscroll (up/down to go faster/slower)<br>
+</div>
+<div id="controls">
 feed me random
 </div>
 <span id="disclaimer">
