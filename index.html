@@ -247,7 +247,7 @@ $(document).ready(function() {
 	$(document).keydown(function(e) {
 		// escape is a sort of "boss-key", removes images and turns off autoscroll (if enabled)
 		if (e.keyCode == 27) { 
-			browse(0); autoscroll(0);
+			browse(0); scrolltoggle = 1; autoscroll();
 		}
 		// a toggles on auto-scrolling
 		if (e.keyCode == 65) {
