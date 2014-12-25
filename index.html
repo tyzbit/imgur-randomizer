@@ -27,6 +27,8 @@ $(document).ready(function() {
 	var scrolltoggle = 0;
 	//scrolling hook
 	var scroller;
+	//check if mobile device for additional controls
+	var ismobile = (/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent);
 	
 	// style to show controls
 	var showstyle = {
@@ -215,6 +217,8 @@ $(document).ready(function() {
 	};
 	
 	//(re)set autoscrolling interval
+	//takes an integer that is the interval for scrolling, checks scrolltoggle to determine if scrolling should be stopped
+	//it's coded dumb, I know.
 	function autoscroll(e) {
 		//assume we need to enable or change the interval
 		if (scrolltoggle == 0) {
@@ -249,40 +253,49 @@ $(document).ready(function() {
 		if (e.keyCode == 27) { 
 			browse(0); scrolltoggle = 1; autoscroll();
 		}
+		// enter begins scrolling and adds compatibility for devices without touchscreen or keyboard (ex. Amazon Fire TV)
+		if (e.keyCode == 13) { 
+			browse(1); scrolltoggle = 0; autoscroll(scrolltimer);
+		}	
 		// a toggles on auto-scrolling
 		if (e.keyCode == 65) {
 			autoscroll(scrolltimer);
 		}
 		//down speeds up scrolling (by reducing interval)
-		if (e.keyCode == 40) {
-			//only do something if we've got autoscroll enabled
-			if (scrolltoggle == 1) {
-				//keep the key from doing it's normal stuff
-				e.preventDefault();
-				//cut the interval down by half
-				scrolltimer = scrolltimer / 2;
-				//toggle scrolling off so the function re-sets the background scroller
-				scrolltoggle = 0;
-				//call the autoscroller
-				autoscroll(scrolltimer);
+		if (e.keyCode == 40 || e.keyCode == 227) {
+			//prevent this behavior on mobile devices
+			if (ismobile == false) {
+				//only do something if we've got autoscroll enabled
+				if (scrolltoggle == 1) {
+					//keep the key from doing it's normal stuff
+					e.preventDefault();
+					//cut the interval down by half
+					scrolltimer = scrolltimer / 2;
+					//toggle scrolling off so the function re-sets the background scroller
+					scrolltoggle = 0;
+					//call the autoscroller
+					autoscroll(scrolltimer);
+				}
 			}
 		}
 		//up slows down scrolling (by increasing interval)
-		if (e.keyCode == 38) {
-			//only do something if we've got autoscroll enabled
-			if (scrolltoggle == 1) {
-				//keep the key from doing it's normal stuff
-				e.preventDefault();
-				//cut the interval down by half
-				scrolltimer = scrolltimer * 2;
-				//toggle scrolling off so the function re-sets the background scroller
-				scrolltoggle = 0;
-				//call the autoscroller
-				autoscroll(scrolltimer);
+		if (e.keyCode == 38 || e.keyCode == 227) {
+			//prevent this behavior on mobile devices
+			if (ismobile == false) {
+				//only do something if we've got autoscroll enabled
+				if (scrolltoggle == 1) {
+					//keep the key from doing it's normal stuff
+					e.preventDefault();
+					//cut the interval down by half
+					scrolltimer = scrolltimer * 2;
+					//toggle scrolling off so the function re-sets the background scroller
+					scrolltoggle = 0;
+					//call the autoscroller
+					autoscroll(scrolltimer);
+				}
 			}
 		}
 	});
-	
 	// if the user clicks the controls, start loading new images
 	$( "body" ).on( "click", "#controls", function () {
 		browse(1);
@@ -310,10 +323,11 @@ $(document).ready(function() {
 <center>
 <div id="images"></div>
 <div id="instructions">
-instructions:<br>
+keyboard shortcuts:<br>
 <br>
-ESC = oh shit key<br>
-A = autoscroll (up/down to go faster/slower)<br>
+[esc] = clear the screen of images (boss key)<br>
+[a] = toggle autoscroll (up/down to go faster/slower)<br><br>
+[enter] to begin with autoscroll
 </div>
 <div id="controls">
 feed me random
