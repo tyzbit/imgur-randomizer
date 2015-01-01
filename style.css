@@ -4,6 +4,9 @@
 body{
 	background:#222;
 	color:#666;
+	font-family:"Tahoma", Geneva, sans-serif;
+	-webkit-transition: background 0.15s linear;
+	-moz-transition: background 0.15s linear;
 }
 a{
 	color:#444;
@@ -13,8 +16,6 @@ img{
 	transition: opacity .1s ease-in-out;
 	-moz-transition: opacity .1s ease-in-out;
 	-webkit-transition: opacity .1s ease-in-out;
-	-moz-box-shadow: 0em 0em .5em .2em #000;
-	-webkit-box-shadow: 0em 0em .5em .2em #000;
 	-moz-border-radius: .2em;
 	-webkit-border-radius: .2em;
 }
@@ -28,11 +29,12 @@ img{
 	position:fixed;
 	top:1em;
 	left:50%;
-	font-size:1.5em;
+	font-size:1.4em;
 	background:#111;
 	border:.05em solid #000;
-	width:20em;
-	margin-left:-10em;
+	width:22em;
+	margin-left:-11em;
+	padding-bottom:.2em;
 	-moz-border-radius: .5em;
 	-webkit-border-radius: .5em;
 	transition: opacity .75s;
@@ -65,9 +67,10 @@ img{
 	bottom:.4em;
 	background: #111;
 	opacity:.6;
-	width:32em;
+	width:35em;
 	-moz-box-shadow: .2em .2em .6em #000;
 	-webkit-box-shadow: .2em .2em .6em #000;
+	padding-bottom:.2em;
 	-moz-border-radius: .2em;
 	-webkit-border-radius: .2em;
 	transition: opacity .2s;
@@ -87,6 +90,7 @@ img{
 	width:12em;
 	-moz-box-shadow: .2em .2em .6em #000;
 	-webkit-box-shadow: .2em .2em .6em #000;
+	padding-bottom:.2em;
 	-moz-border-radius: .2em;
 	-webkit-border-radius: .2em;
 	transition: opacity .2s;
@@ -105,6 +109,7 @@ img{
 	left:50%;
 	width: 16em;
 	margin-left:-8em;
+	padding-bottom:.2em;
 	background: #111;
 	opacity: .6;
 	z-index:1;
@@ -136,6 +141,7 @@ img{
    #controls
    {
    font-size:6em;
+   bottom:.5em;
    }
    #instructions
    {

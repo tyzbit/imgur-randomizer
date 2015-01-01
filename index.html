@@ -59,6 +59,9 @@ $(document).ready(function() {
 			$("#instructions").css( "opacity", "0");
 			// fade out the privacy policy
 			$("#privacy").css( "opacity", "0");
+			// make the background black
+			$("body").css( "background", "#000");
+			
 			// hide the controls, instructions and privacy footnote on a delay
 			window.setTimeout( function () {
 				$("#controls").css('display', 'none');
@@ -77,10 +80,13 @@ $(document).ready(function() {
 		if ( e == 0 ) {
 			//tell the googles
 			ga('send', 'event', 'Stopped browsing');
+			// change the background back
+			$("body").css( "background", "#222");
 			// this is what stops loading new images
 			window.clearInterval(browseVar);
-			// Change the controls text
+			// Change the controls text and css
 			$("#controls").text("resume the random");
+			$("#controls").css({"width": "10em", "margin-left":"-5em"});
 			// apply style to show the controls
 			$("#controls").css( showstyle );
 			// apply style to show the instructions
@@ -338,7 +344,8 @@ By use of this site, you express consent to this tracking.');
 keyboard shortcuts:<br>
 <br>
 [esc] = clear the screen of images (boss key)<br>
-[a] = toggle autoscroll (up/down to go faster/slower)<br><br>
+[a] = toggle autoscroll<br>
+[up]/[down] = change autoscroll speed<br><br>
 [enter] to begin with autoscroll
 </div>
 <div id="controls">
