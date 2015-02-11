@@ -36,6 +36,8 @@ $(document).ready(function() {
 		opacity : "1"
 	};
 	
+	// send initial pageview
+	ga(['_trackPageview', '/home/landingPage']);
 	// set variable that determines how many pixels of screen needs images
 	var readahead = 400;
 	// load more images if the device is in portrait because the images will generally be bigger
