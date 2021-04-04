@@ -1,6 +1,8 @@
 imgur-randomizer
 ================
 
+## This repository is archived and unsupported.  Code here is for historical and learning purposes.
+
 Randomly display imgur URLs on a page
 
 Current version now scrolls infinitely!
